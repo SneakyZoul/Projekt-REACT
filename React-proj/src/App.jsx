@@ -1,45 +1,56 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import { useState,useEffect,setState } from 'react'
+import './Style/App.css'
+import AnimatedBg from "react-animated-bg";
+import Wrapper from './Componets/AnimeatedBG';
+import Workouts from './Componets/Workouts';
+import Button from './Componets/Button';
 
-function App() {
-  const [count, setCount] = useState(0)
+// by default delay = 0 and duration = 0.2s
+const App =() => {
+const [showWorkout, setShowWorkout] = useState(true)
+
+  const [workout,setWorkout]=useState([]);
+  const fetchWorkOut= async () => {
+    const res = await fetch('http://localhost:5000/workout')
+    const data = await res.json();
+    return data;
+    }
+ 
+useEffect(() => {
+  const getWorkout = async() =>{
+ const workoutFromServer = await fetchWorkOut()
+  setWorkout(workoutFromServer)
+  }
+  getWorkout();
+ },[])
+ //fetching from api
+
+
+
+const onClick = (()=>{
+  console.log('click');
+})
+
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
+    {showWorkout && workout.length > 0 ?
+    <Workouts workouts={workout}/>
+     : 'Press to show Workouts'} 
+     <Button 
+     text={"Show"} 
+     color={'green'} 
+     onClick={onClick} 
+     onShow={()=>setShowWorkout(!showWorkout)}/>
+
+
+
+
+     {/* <Wrapper/>  */}
+
     </div>
   )
+
 }
 
 export default App
